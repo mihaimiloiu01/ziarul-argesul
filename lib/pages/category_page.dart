@@ -19,7 +19,8 @@ class Category extends StatefulWidget {
 class _CategoryState extends State<Category> {
   late List<Article> articles = [];
   final String rootEndPointUrl = "https://ziarulargesul.ro/";
-  late BannerAd bottomBanner;
+  BannerAd? bottomBanner;
+  bool isAdLoaded = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -28,22 +29,37 @@ class _CategoryState extends State<Category> {
   void initState() {
     super.initState();
     _loadArticles();
+    _createBannerAd();
+  }
 
+  void _createBannerAd() {
     bottomBanner = BannerAd(
       size: AdSize.banner,
       adUnitId: AdHelper.bannerAdUnitId,
       listener: BannerAdListener(
         onAdLoaded: (Ad ad) {
-          print('News Category page: Bottom banner loaded');
+          print('✅ Category page: Banner ad loaded successfully');
+          setState(() {
+            isAdLoaded = true;
+          });
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print('News Category page: Bottom banner failed to load');
+          print('❌ Category page: Banner ad failed to load: ${error.message}');
+          print('Error code: ${error.code}');
+          print('Error domain: ${error.domain}');
+          ad.dispose();
+          setState(() {
+            isAdLoaded = false;
+            bottomBanner = null;
+          });
         },
+        onAdOpened: (Ad ad) => print('Category page: Banner ad opened'),
+        onAdClosed: (Ad ad) => print('Category page: Banner ad closed'),
       ),
       request: const AdRequest(),
     );
 
-    bottomBanner.load();
+    bottomBanner?.load();
   }
 
   Future<void> _loadArticles() async {
@@ -56,6 +72,12 @@ class _CategoryState extends State<Category> {
         });
       }
     }
+  }
+
+  @override
+  void dispose() {
+    bottomBanner?.dispose();
+    super.dispose();
   }
 
   @override
@@ -86,10 +108,21 @@ class _CategoryState extends State<Category> {
             ),
           ),
         ),
-        Container(
-          height: 75,
-          child: AdWidget(ad: bottomBanner),
-        ),
+        // Only show ad container if ad is loaded
+        if (isAdLoaded && bottomBanner != null)
+          Container(
+            height: 60,
+            child: AdWidget(ad: bottomBanner!),
+          ),
+        // Show placeholder or loading indicator if ad is not loaded
+        if (!isAdLoaded)
+          Container(
+            height: 60,
+            color: Colors.grey[200],
+            child: const Center(
+              child: Text('Loading ad...', style: TextStyle(color: Colors.grey)),
+            ),
+          ),
       ],
     ),
   );

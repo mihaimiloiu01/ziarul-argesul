@@ -4,9 +4,11 @@ class AdHelper {
 
   static String get bannerAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-7904587159144019/7458501500';
+      // Production ID: return 'ca-app-pub-4470739099972924~2355457446';
+      return 'ca-app-pub-3940256099942544/6300978111';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-7904587159144019/2014603131';
+      // Production ID: return 'ca-app-pub-4470739099972924/3546847705';
+      return 'ca-app-pub-3940256099942544/2934735716';
     } else {
       throw UnsupportedError('Unsupported platform');
     }
@@ -14,9 +16,11 @@ class AdHelper {
 
   static String get articleInterstitialAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-7904587159144019/2014603131';
+      // Production ID: return 'ca-app-pub-4470739099972924/3193170043';
+      return 'ca-app-pub-3940256099942544/1033173712';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-7904587159144019/9651650071';
+      // Production ID: return 'ca-app-pub-4470739099972924/1582141296';
+      return 'ca-app-pub-3940256099942544/4411468910';
     } else {
       throw UnsupportedError('Unsupported platform');
     }

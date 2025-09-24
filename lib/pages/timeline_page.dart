@@ -26,32 +26,49 @@ class _TimelinePage extends State<TimelinePage> {
 
   late Future<List<Article>> article;
   final String endPointUrl = "https://ziarulargesul.ro";
-  late BannerAd bottomBanner;
+  BannerAd? bottomBanner;
+  bool isAdLoaded = false;
 
   @override
   void initState() {
     super.initState();
     article = ApiService().getArticle(endPointUrl);
+    _createBannerAd();
+  }
 
+  void _createBannerAd() {
     bottomBanner = BannerAd(
-        size: AdSize.banner,
-        adUnitId: AdHelper.bannerAdUnitId,
-        listener: BannerAdListener(
-            onAdLoaded: (Ad ad) {
-              print('Timeline page: Bottom banner loaded');
-            },
-            onAdFailedToLoad: (Ad ad, LoadAdError error) {
-              print('Timeline page: Bottom banner failed to load');
-            }
-        ),
-        request: const AdRequest());
+      size: AdSize.banner,
+      adUnitId: AdHelper.bannerAdUnitId,
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          print('✅ Timeline page: Banner ad loaded successfully');
+          setState(() {
+            isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('❌ Timeline page: Banner ad failed to load: ${error.message}');
+          print('Error code: ${error.code}');
+          print('Error domain: ${error.domain}');
+          ad.dispose();
+          setState(() {
+            isAdLoaded = false;
+            bottomBanner = null;
+          });
+        },
+        onAdOpened: (Ad ad) => print('Timeline page: Banner ad opened'),
+        onAdClosed: (Ad ad) => print('Timeline page: Banner ad closed'),
+      ),
+      request: const AdRequest(),
+    );
 
-    bottomBanner.load();
+    bottomBanner?.load();
   }
 
   @override
   void dispose() {
-    bottomBanner.dispose();
+    bottomBanner?.dispose();
     super.dispose();
   }
 
@@ -64,26 +81,26 @@ class _TimelinePage extends State<TimelinePage> {
     appBar: AppBar(
       elevation: 0.0,
       title: Image.asset('images/argesul_drawer.png',
-          height: 41,
-          width: 400,
-          fit: BoxFit.contain,
-          alignment: const Alignment(0.27, 0.27),
+        height: 41,
+        width: 400,
+        fit: BoxFit.contain,
+        alignment: const Alignment(0.27, 0.27),
       ),
       actions: [
-       IconButton(
+        IconButton(
           icon: const Icon(Icons.notifications),
           onPressed: () async {
             await notifications.openNotificationSettings();
           },
-       ),
+        ),
         IconButton(
-            icon: Icon(appTheme.currentTheme() == ThemeMode.light
-                ? Icons.dark_mode
-                : Icons.light_mode),
-            onPressed: () {
-              appTheme.switchTheme();
-              setState(() {});
-            },
+          icon: Icon(appTheme.currentTheme() == ThemeMode.light
+              ? Icons.dark_mode
+              : Icons.light_mode),
+          onPressed: () {
+            appTheme.switchTheme();
+            setState(() {});
+          },
         ),
       ],
     ),
@@ -101,78 +118,93 @@ class _TimelinePage extends State<TimelinePage> {
             child: FutureBuilder<List<Article>>(
               future: article,
               builder: (BuildContext context, AsyncSnapshot<List<Article>> snapshot) {
-              if (snapshot.hasData) {
+                if (snapshot.hasData) {
                   List<Article>? articles = snapshot.data;
                   return ListView.builder(
                     itemCount: articles?.length,
                     itemBuilder: (context, index) =>
                         newsCard(articles![index], context),
                   );
-              }
-              else {
+                }
+                else {
                   return const Center(
-                      child: CircularProgressIndicator(color: Colors.red,),
+                    child: CircularProgressIndicator(color: Colors.red,),
                   );
-              }
+                }
               },
             ),
           ),
-          Container(
-              height: 75,
-              child: AdWidget(ad: bottomBanner)
-          ),
-      ],
-    ),
-    ),
-    floatingActionButton: SpeedDial(
-      backgroundColor: Colors.white,
-      visible: true,
-      elevation: 8.0,
-      shape: const CircleBorder(),
-      child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: Colors.red,
-            width: 2.0,
-          ),
-        ),
-        child: ClipOval(
-          child: Image.asset(
-            'images/floating_button.png', // Replace with your image path
-            width: 68, // Adjust width as needed
-            height: 68, // Adjust height as needed
-            fit: BoxFit.cover, // Adjust how the image fits inside the circular shape
-          ),
-        ),
+          // Only show ad container if ad is loaded
+          if (isAdLoaded && bottomBanner != null)
+            Container(
+              height: 60,
+              child: AdWidget(ad: bottomBanner!),
+            ),
+          // Show placeholder or loading indicator if ad is not loaded
+          if (!isAdLoaded)
+            Container(
+              height: 60,
+              color: Colors.grey[200],
+              child: const Center(
+                child: Text('Loading ad...', style: TextStyle(color: Colors.grey)),
+              ),
+            ),
+        ],
       ),
-      children: [
-        SpeedDialChild(
-          child: const Icon(Icons.phone),
-          backgroundColor: Colors.green,
-          onTap: () => openDialer('0737035999'),
-          label: 'Contacteaza-ne telefonic',
-          labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)
+    ),
+    floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    floatingActionButton: Padding(
+      padding: const EdgeInsets.only(bottom: 30.0), // Positioned above the ad banner
+      child: SpeedDial(
+        backgroundColor: Colors.white,
+        visible: true,
+        elevation: 25.0,
+        shape: const CircleBorder(),
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.red,
+              width: 2.0,
+            ),
+          ),
+          child: ClipOval(
+            child: Image.asset(
+              'images/floating_button.png',
+              width: 68,
+              height: 68,
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
-        SpeedDialChild(
-            child: const Icon(Icons.facebook_sharp),
-            backgroundColor: Colors.blueAccent,
-            onTap: () {
-              _launchInBrowser(facebookUrltoLaunch);
-            },
-          label: 'Pagina noastra de Facebook',
-          labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)
-        ),
-        SpeedDialChild(
-          child: const Icon(Icons.http_sharp),
-          backgroundColor: Colors.indigoAccent,
-          onTap: () {
-            _launchInBrowser(toLaunch);
-          },
-          label: 'Site Ziarul Argesul',
-          labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)
-        )
-      ],
+        children: [
+          SpeedDialChild(
+              child: const Icon(Icons.phone),
+              backgroundColor: Colors.green,
+              onTap: () => openDialer('0737035999'),
+              label: 'Contacteaza-ne telefonic',
+              labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)
+          ),
+          SpeedDialChild(
+              child: const Icon(Icons.facebook_sharp),
+              backgroundColor: Colors.blueAccent,
+              onTap: () {
+                _launchInBrowser(facebookUrltoLaunch);
+              },
+              label: 'Pagina noastra de Facebook',
+              labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)
+          ),
+          SpeedDialChild(
+              child: const Icon(Icons.http_sharp),
+              backgroundColor: Colors.indigoAccent,
+              onTap: () {
+                _launchInBrowser(toLaunch);
+              },
+              label: 'Site Ziarul Argesul',
+              labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)
+          )
+        ],
+      ),
     ),
   );
 
@@ -254,8 +286,8 @@ class MySearchDelegate extends SearchDelegate{
           onTap:  () {
             close(context, result);
             Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const Category("")),
-          );},
+              MaterialPageRoute(builder: (context) => const Category("")),
+            );},
           title: Text(result),
         );
       },
