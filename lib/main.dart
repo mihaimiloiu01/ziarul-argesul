@@ -20,12 +20,12 @@ const firebaseOptionsAndroid = FirebaseOptions(
 );
 
 const firebaseOptionsIOS = FirebaseOptions(
-  apiKey: 'AIzaSyCg7j-6W4nCJbhN_L7S51Azqa8846anDrY',
-  appId: '1:42867425029:ios:741af50176372e766e816c',
-  messagingSenderId: '42867425029',
-  projectId: 'ziarul-argesul-apk-2edd0',
-  storageBucket: 'ziarul-argesul-apk-2edd0.firebasestorage.app',
-  iosBundleId: 'com.example.ziarulArgesul',
+  apiKey: 'AIzaSyCl4GxJZ1_YtXUl0unP2rtOX1PxGOh3dhQ',
+  appId: '1:508394428500:ios:c2ee33c6b65bff920475c1',
+  messagingSenderId: '508394428500',
+  projectId: 'ziarul-argesul',
+  storageBucket: 'ziarul-argesul.firebasestorage.app',
+  iosBundleId: 'ro.ziarulargesul.mobile',
 );
 
 Future<void> main() async {
