@@ -25,7 +25,7 @@ class Notifications extends ChangeNotifier{
   }
 
   Future<void> openNotificationSettings() async {
-    const platform = MethodChannel('com.example.notifications/permissions');
+    const platform = MethodChannel('ro.ziarulargesul.mobile.notifications/permissions');
     try {
       await platform.invokeMethod('openNotificationSettings');
     } on PlatformException catch (e) {
