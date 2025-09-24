@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "508394428500",
+    "project_id": "ziarul-argesul",
+    "storage_bucket": "ziarul-argesul.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:508394428500:android:b99b14616feb905e0475c1",
+        "android_client_info": {
+          "package_name": "ro.ziarulargesul.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1JguWDqTs0yn3L4asYnHyBSmAoCs0fS4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

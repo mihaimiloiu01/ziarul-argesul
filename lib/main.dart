@@ -12,11 +12,11 @@ import 'package:ziarul_argesul/theme/config.dart';
 import 'package:ziarul_argesul/util/adapters.dart';
 
 const firebaseOptionsAndroid = FirebaseOptions(
-  apiKey: 'AIzaSyCV_YJ7bkYKn2THIbkbWpPEKbPSi1_XjBk',
-  appId: '1:42867425029:android:8c9d0cfd7753f4ce6e816c',
-  messagingSenderId: '42867425029',
-  projectId: 'ziarul-argesul-apk-2edd0',
-  storageBucket: 'ziarul-argesul-apk-2edd0.appspot.com',
+  apiKey: 'AIzaSyA1JguWDqTs0yn3L4asYnHyBSmAoCs0fS4',
+  appId: '1:508394428500:android:b99b14616feb905e0475c1',
+  messagingSenderId: '508394428500',
+  projectId: 'ziarul-argesul',
+  storageBucket: 'ziarul-argesul.firebasestorage.app',
 );
 
 const firebaseOptionsIOS = FirebaseOptions(
