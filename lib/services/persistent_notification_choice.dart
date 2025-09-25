@@ -25,15 +25,6 @@ class Notifications extends ChangeNotifier {
     notifyListeners();
   }
 
-  /*Future<void> openNotificationSettings() async {
-    const platform = MethodChannel('ro.ziarulargesul.mobile/browser');
-    try {
-      await platform.invokeMethod('openNotificationSettings');
-    } on PlatformException catch (e) {
-      print("Failed to open notification settings: '${e.message}'.");
-    }
-  }*/
-
   Future<void> openNotificationSettings() async {
     // First request permission
     FirebaseMessaging messaging = FirebaseMessaging.instance;
