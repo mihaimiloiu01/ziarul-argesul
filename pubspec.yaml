@@ -64,6 +64,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.10
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -88,6 +90,8 @@ flutter:
     - images/argesul_drawer.png
     - images/news_template.png
     - images/floating_button.png
+    - images/icon_ziarul_argesul.png
+    - images/splash_ziarul_argesul.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -118,6 +122,38 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+# App Icon Configuration
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "images/icon_ziarul_argesul.png"  # Your logo file
+  min_sdk_android: 21
+  remove_alpha_ios: true
+
+# Splash Screen Configuration
+flutter_native_splash:
+  color: "#ffffff"  # White background
+  image: "images/splash_ziarul_argesul.png"  # Same logo for splash
+
+  # Optional: Dark mode version
+  color_dark: "#f5f5f5"  # Light gray for dark mode
+  image_dark: "images/splash_ziarul_argesul.png"  # Same logo works on both
+
+  # Android 12+ support
+  android_12:
+    image: "images/splash_ziarul_argesul.png"
+    icon_background_color: "#ffffff"
+    # This prevents the adaptive icon cropping
+    branding: "images/splash_ziarul_argesul.png"
+
+  # Platform settings
+  ios: true
+  fullscreen: true
+  android_gravity: center
+  ios_content_mode: center
+
+  web: false
 
 features:
   super-parameters: enabled
