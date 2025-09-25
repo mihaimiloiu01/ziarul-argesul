@@ -37,6 +37,16 @@ Future<void> main() async {
   );
   print("✅ Firebase initialized");
 
+  // Request notification permissions
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  print('User granted permission: ${settings.authorizationStatus}');
+
   await Hive.initFlutter();
   Hive.registerAdapter(ArticleAdapter());
   print("➡️ Opening Hive boxes...");
