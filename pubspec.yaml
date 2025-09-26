@@ -140,15 +140,9 @@ flutter_native_splash:
   color_dark: "#f5f5f5"  # Light gray for dark mode
   image_dark: "images/splash_ziarul_argesul.png"  # Same logo works on both
 
-  # Android 12+ support
-  android_12:
-    image: "images/splash_ziarul_argesul.png"
-    icon_background_color: "#ffffff"
-    # This prevents the adaptive icon cropping
-    branding: "images/splash_ziarul_argesul.png"
-
   # Platform settings
   ios: true
+  android: false
   fullscreen: false
   android_gravity: center
   ios_content_mode: center
