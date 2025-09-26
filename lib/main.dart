@@ -74,16 +74,55 @@ Future<void> main() async {
     print("❌ Permission error: $e");
   }
 
-  // FCM token
+  // FCM token with proper timing handling
   try {
     if (Platform.isIOS) {
-      final bool isSimulator =
-      Platform.environment.containsKey("SIMULATOR_DEVICE_NAME");
+      final bool isSimulator = Platform.environment.containsKey("SIMULATOR_DEVICE_NAME");
       if (isSimulator) {
         print("⚠️ iOS Simulator → Skipping FCM token");
       } else {
-        final token = await FirebaseMessaging.instance.getToken();
-        print("📲 iOS device FCM token: $token");
+        print("📲 iOS device → Getting FCM token...");
+
+        // Add delay to allow APNS token to be set
+        await Future.delayed(Duration(seconds: 2));
+
+        String? token;
+        int maxRetries = 5;
+
+        for (int i = 0; i < maxRetries; i++) {
+          try {
+            // Check if APNS token is available first
+            String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+
+            if (apnsToken != null) {
+              print("✅ APNS token available, getting FCM token...");
+              token = await FirebaseMessaging.instance.getToken();
+              if (token != null) {
+                print("📲 iOS device FCM token: $token");
+                break; // Success, exit retry loop
+              }
+            } else {
+              print("⏳ APNS token not ready, waiting... (attempt ${i + 1})");
+            }
+
+            // Wait before retrying (exponential backoff)
+            if (i < maxRetries - 1) {
+              await Future.delayed(Duration(seconds: 2 * (i + 1)));
+            }
+
+          } catch (e) {
+            print("❌ FCM token error (attempt ${i + 1}): $e");
+            if (i < maxRetries - 1) {
+              await Future.delayed(Duration(seconds: 2 * (i + 1)));
+            } else {
+              rethrow; // Rethrow on last attempt
+            }
+          }
+        }
+
+        if (token == null) {
+          print("❌ Failed to get FCM token after $maxRetries attempts");
+        }
       }
     } else if (Platform.isAndroid) {
       final token = await FirebaseMessaging.instance.getToken();
@@ -91,6 +130,8 @@ Future<void> main() async {
     }
   } catch (e) {
     print("❌ FCM token error: $e");
+    // Optional: Try again later in the app lifecycle
+    print("💡 Will retry FCM token later...");
   }
 
   print("➡️ Running app...");
