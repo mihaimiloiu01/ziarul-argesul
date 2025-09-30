@@ -80,11 +80,11 @@ class _TimelinePage extends State<TimelinePage> {
     drawer: NavigationDrawerWidget(),
     appBar: AppBar(
       elevation: 0.0,
-      title: Image.asset('images/argesul_drawer.png',
+      centerTitle: true,
+      title: Image.asset(
+        'images/argesul_drawer.png',
         height: 41,
-        width: 400,
         fit: BoxFit.contain,
-        alignment: const Alignment(0.27, 0.27),
       ),
       actions: [
         IconButton(
@@ -134,13 +134,11 @@ class _TimelinePage extends State<TimelinePage> {
               },
             ),
           ),
-          // Only show ad container if ad is loaded
           if (isAdLoaded && bottomBanner != null)
             Container(
               height: 60,
               child: AdWidget(ad: bottomBanner!),
             ),
-          // Show placeholder or loading indicator if ad is not loaded
           if (!isAdLoaded)
             Container(
               height: 60,
@@ -154,7 +152,7 @@ class _TimelinePage extends State<TimelinePage> {
     ),
     floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     floatingActionButton: Padding(
-      padding: const EdgeInsets.only(bottom: 30.0), // Positioned above the ad banner
+      padding: const EdgeInsets.only(bottom: 30.0),
       child: SpeedDial(
         backgroundColor: Colors.white,
         visible: true,

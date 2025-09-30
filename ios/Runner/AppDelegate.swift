@@ -24,17 +24,6 @@ import FirebaseMessaging
           if let error = error {
             print("Notification permission error: \(error)")
           }
-
-  // Handle APNS token registration
-  func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-    print("APNS token received: \(deviceToken)")
-    // Set APNS token for Firebase Messaging
-    Messaging.messaging().apnsToken = deviceToken
-  }
-
-  func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-    print("Failed to register for remote notifications: \(error)")
-  }
         }
       )
     } else {
@@ -83,6 +72,25 @@ import FirebaseMessaging
       }
     }
   }
+
+  // Handle APNS token registration
+  override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    print("APNS token received: \(deviceToken)")
+    Messaging.messaging().apnsToken = deviceToken
+  }
+
+  override func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+    print("Failed to register for remote notifications: \(error)")
+  }
+
+  // Disable State Restoration to prevent crash
+  override func application(_ application: UIApplication, shouldSaveSecureApplicationState coder: NSCoder) -> Bool {
+    return false
+  }
+
+  override func application(_ application: UIApplication, shouldRestoreSecureApplicationState coder: NSCoder) -> Bool {
+    return false
+  }
 }
 
 // MARK: - MessagingDelegate
@@ -100,24 +108,18 @@ extension AppDelegate: MessagingDelegate {
 }
 
 // MARK: - UNUserNotificationCenterDelegate
-// Note: Removed redundant protocol conformance since FlutterAppDelegate already conforms
 extension AppDelegate {
-  // Receive displayed notifications for iOS 10 devices.
   override func userNotificationCenter(_ center: UNUserNotificationCenter,
                               willPresent notification: UNNotification,
                               withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions)
                                 -> Void) {
     let userInfo = notification.request.content.userInfo
 
-    // Print message ID.
     if let messageID = userInfo["gcm.message_id"] {
       print("Message ID: \(messageID)")
     }
 
-    // Print full message.
     print(userInfo)
-
-    // Change this to your preferred presentation option
     completionHandler([[.alert, .sound]])
   }
 
@@ -126,14 +128,11 @@ extension AppDelegate {
                               withCompletionHandler completionHandler: @escaping () -> Void) {
     let userInfo = response.notification.request.content.userInfo
 
-    // Print message ID.
     if let messageID = userInfo["gcm.message_id"] {
       print("Message ID: \(messageID)")
     }
 
-    // Print full message.
     print(userInfo)
-
     completionHandler()
   }
 }

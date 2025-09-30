@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:ziarul_argesul/util/utils.dart';
 
 import '../ads/ad_helper.dart';
@@ -62,6 +63,15 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
     bottomBanner?.load();
   }
 
+  void _shareArticle() {
+    final String shareText = '${Utils.replaceHtmlEntities(widget.title ?? "Articol")}\n\n${widget.url ?? ""}';
+
+    Share.share(
+      shareText,
+      subject: Utils.replaceHtmlEntities(widget.title ?? "Articol de la Ziarul Argesul"),
+    );
+  }
+
   @override
   void dispose() {
     bottomBanner?.dispose();
@@ -73,17 +83,25 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        title: Image.asset('images/argesul_drawer.png',
-            height: 41,
-            width: 400,
-            fit: BoxFit.contain,
-            alignment: const Alignment(-0.27,0)),
+        centerTitle: true,
+        title: Image.asset(
+          'images/argesul_drawer.png',
+          height: 41,
+          fit: BoxFit.contain,
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: _shareArticle,
+            tooltip: 'Distribuie articolul',
+          ),
+        ],
       ),
 
       body: Column(
@@ -192,13 +210,11 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
               ],
             ),
           ),
-          // Only show ad container if ad is loaded
           if (isAdLoaded && bottomBanner != null)
             Container(
               height: 60,
               child: AdWidget(ad: bottomBanner!),
             ),
-          // Show placeholder or loading indicator if ad is not loaded
           if (!isAdLoaded)
             Container(
               height: 60,
